@@ -1,0 +1,167 @@
+"use client";
+
+import React, { useState } from "react";
+import clsx from "clsx";
+
+import { Button } from "@/components/Button/buttonComponent";
+import { Icon } from "@/components/Icon/iconComponent";
+import { activateUser } from "@/app/(DataAccessLayer)/(appServices)/calls/admin/callActivateUser";
+import { CallerWrapper } from "@/utils/CallerWrapper";
+
+type Status = "idle" | "loading" | "success" | "error";
+
+interface Props {
+  onClose: () => void;
+  onActivated: (userId: number) => void;
+  userId: number;
+  userName: string;
+}
+
+export const ActivateUserModal = ({
+  onClose,
+  onActivated,
+  userId,
+  userName,
+}: Props) => {
+  const [status, setStatus] = useState<Status>("idle");
+
+  const hasError = status === "error";
+
+  async function handleActivate() {
+    setStatus("loading");
+    try {
+      const result = await CallerWrapper(activateUser(userId));
+      if (result.success) {
+        setStatus("success");
+        onActivated(userId);
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  function getStatus(): {
+    colorClass: string;
+    hrClass: string;
+    buttonType: "confirm" | "cancel";
+    buttonText: string;
+    canClose: boolean;
+  } {
+    switch (status) {
+      case "loading":
+        return {
+          colorClass: "border-border-muted",
+          hrClass: "border-border-muted",
+          buttonType: "cancel",
+          buttonText: "Ativando...",
+          canClose: false,
+        };
+      case "success":
+        return {
+          colorClass: "border-border-highlight",
+          hrClass: "border-border-highlight",
+          buttonType: "confirm",
+          buttonText: "Fechar",
+          canClose: true,
+        };
+      case "error":
+        return {
+          colorClass: "border-border-error",
+          hrClass: "border-border-error",
+          buttonType: "cancel",
+          buttonText: "Fechar",
+          canClose: true,
+        };
+      default:
+        return {
+          colorClass: "border-border-muted",
+          hrClass: "border-border-muted",
+          buttonType: "cancel",
+          buttonText: "Ativar",
+          canClose: false,
+        };
+    }
+  }
+
+  const statusInfo = getStatus();
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className={clsx(
+          "relative px-medium py-medium rounded-xl border-3 w-2xl text-center shadow-lg shadow-black/30 font-content text-content text-text-main bg-bg-card",
+          statusInfo.colorClass
+        )}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div
+          className="absolute flex top-small right-small p-1 cursor-pointer rounded-full hover:bg-bg-app/20 transition"
+          onClick={onClose}
+          role="button"
+          tabIndex={0}
+          aria-label="Close modal"
+          onKeyDown={(e) => e.key === "Enter" && onClose()}
+        >
+          <Icon type="close" size="medium" color="cancel" />
+        </div>
+
+        <div className="flex flex-col h-full justify-between">
+          <div>
+            <h2 className="mb-extra-small font-title text-title font-normal">
+              Ativar Usuário
+            </h2>
+            <hr
+              className={clsx(
+                "border-t-2 w-2/3 mx-auto mb-default rounded-full",
+                statusInfo.hrClass
+              )}
+            />
+
+            {status === "success" ? (
+              <p>
+                Usuário <strong>{userName}</strong> ativado com sucesso!
+              </p>
+            ) : hasError ? (
+              <p>
+                Erro ao ativar o usuário <strong>{userName}</strong>.
+                Tente novamente.
+              </p>
+            ) : (
+              <>
+                <p>Tem certeza que deseja ativar o usuário:</p>
+                <p className="mt-extra-small text-title font-normal">
+                  {userName}
+                </p>
+                <p className="mt-1 text-sm text-text-muted">
+                  O usuário poderá registrar cliques novamente.
+                </p>
+              </>
+            )}
+          </div>
+
+          <div className="flex justify-center mt-default gap-small">
+            <Button
+              type={statusInfo.buttonType}
+              onClickAction={() => {
+                if (statusInfo.canClose) {
+                  onClose();
+                } else {
+                  handleActivate();
+                }
+              }}
+              size="medium"
+              disabled={status === "loading"}
+            >
+              {statusInfo.buttonText}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme static inline {
+  --black: #000000;
+  --white: #ffffff;
+  --green: #5ec899;
+  --alt-green: #000000;
+  --dark-gray: #0f171f;
+  --alt-dark-gray: #10171f;
+  --mid-gray: #393939;
+  --alt-mid-gray: #000000;
+  --light-gray: #dddddd;
+  --alt-light-gray: #e8e6e2;
+  --red: #d95e50;
+  --alt-red: #000000;
+  --overlay: #00000050;
+  --blue: #1a2d3d;
+  --alt-purple: #655ec8;
+  /* different light gray -> #e5e3df */
+
+  --light-white: #e4e2dd;
+  --light-blue: #c3d1e0;
+  --dark-blue: #5377a0;
+  --dark-gray-blue: #2b3d53;
+}
