@@ -1,0 +1,62 @@
+const config = require('./jest.config')
+
+config.testMatch = [
+  '<rootDir>/src/presentation/helpers/validators/**/*.spec.ts',
+  '<rootDir>/src/utils/**/*.spec.ts',
+  '<rootDir>/src/infra/cryptography/**/*.spec.ts',
+  '<rootDir>/src/infra/clicks-api/**/*.spec.ts',
+  '<rootDir>/src/data/usecases/authentication/**/*.spec.ts',
+  '<rootDir>/src/data/usecases/change-pass/**/*.spec.ts',
+  '<rootDir>/src/data/usecases/delete-campaign/**/*.spec.ts',
+  '<rootDir>/src/data/usecases/load-integration-status/**/*.spec.ts',
+  '<rootDir>/src/data/usecases/load-meta-click-by-id/**/*.spec.ts',
+  '<rootDir>/src/data/usecases/logout/**/*.spec.ts',
+  '<rootDir>/src/data/usecases/register-wait-list/**/*.spec.ts',
+  '<rootDir>/src/data/usecases/update-integration-status/**/*.spec.ts',
+  '<rootDir>/src/main/adapters/**/*.spec.ts',
+  '<rootDir>/src/presentation/controller/clear-account-data/**/*.spec.ts',
+  '<rootDir>/src/presentation/controller/delete-campaign/**/*.spec.ts',
+  '<rootDir>/src/presentation/controller/load-campaign-steps-summary/**/*.spec.ts',
+  '<rootDir>/src/presentation/controller/load-integration-status/**/*.spec.ts',
+  '<rootDir>/src/presentation/controller/load-meta-click-by-id/**/*.spec.ts',
+  '<rootDir>/src/presentation/controller/load-taboola-account-info/**/*.spec.ts',
+  '<rootDir>/src/presentation/controller/load-user-data/**/*.spec.ts',
+  '<rootDir>/src/presentation/controller/login/**/*.spec.ts',
+  '<rootDir>/src/presentation/controller/logout/**/*.spec.ts',
+  '<rootDir>/src/presentation/controller/register-wait-list/**/*.spec.ts',
+  '<rootDir>/src/main/factories/controllers/add-campaign/**/*.spec.ts',
+  '<rootDir>/src/main/factories/controllers/add-taboola-info-controller/**/*.spec.ts',
+  '<rootDir>/src/main/factories/controllers/login/**/*.spec.ts'
+]
+
+config.collectCoverageFrom = [
+  '<rootDir>/src/presentation/helpers/validators/**/*.ts',
+  '<rootDir>/src/utils/**/*.ts',
+  '<rootDir>/src/infra/cryptography/**/*.ts',
+  '<rootDir>/src/infra/clicks-api/**/*.ts',
+  '<rootDir>/src/data/usecases/authentication/**/*.ts',
+  '<rootDir>/src/data/usecases/change-pass/**/*.ts',
+  '<rootDir>/src/data/usecases/delete-campaign/**/*.ts',
+  '<rootDir>/src/data/usecases/load-integration-status/**/*.ts',
+  '<rootDir>/src/data/usecases/load-meta-click-by-id/**/*.ts',
+  '<rootDir>/src/data/usecases/logout/**/*.ts',
+  '<rootDir>/src/data/usecases/register-wait-list/**/*.ts',
+  '<rootDir>/src/data/usecases/update-integration-status/**/*.ts',
+  '<rootDir>/src/main/adapters/**/*.ts',
+  '<rootDir>/src/presentation/controller/clear-account-data/**/*.ts',
+  '<rootDir>/src/presentation/controller/delete-campaign/**/*.ts',
+  '<rootDir>/src/presentation/controller/load-campaign-steps-summary/**/*.ts',
+  '<rootDir>/src/presentation/controller/load-integration-status/**/*.ts',
+  '<rootDir>/src/presentation/controller/load-meta-click-by-id/**/*.ts',
+  '<rootDir>/src/presentation/controller/load-taboola-account-info/**/*.ts',
+  '<rootDir>/src/presentation/controller/load-user-data/**/*.ts',
+  '<rootDir>/src/presentation/controller/login/**/*.ts',
+  '<rootDir>/src/presentation/controller/logout/**/*.ts',
+  '<rootDir>/src/presentation/controller/register-wait-list/**/*.ts',
+  '<rootDir>/src/main/factories/controllers/add-campaign/**/*.ts',
+  '<rootDir>/src/main/factories/controllers/add-taboola-info-controller/**/*.ts',
+  '<rootDir>/src/main/factories/controllers/login/**/*.ts',
+  '!<rootDir>/src/**/*.spec.ts'
+]
+
+module.exports = config
