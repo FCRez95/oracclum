@@ -146,13 +146,21 @@ The click writers were designed around duplicate and partial event delivery. Ins
 
 ## Repository Layout
 
-This monorepo will be organized by runtime boundary:
+This monorepo is organized by runtime boundary. The current public portfolio
+snapshot includes the main application frontend and backend:
 
 ```text
 app/
   front/                       Next.js client application and BFF routes
   back/                        Node.js backend API for auth, campaigns, integrations, and reporting
+```
 
+The original production system also included separate ingestion services,
+Lambda workers, and operations/product documentation. Those runtime boundaries
+are described here for system context, but their source folders have not been
+restored into this repository snapshot yet:
+
+```text
 services/
   clicks-taboola-api/          Go API for high-throughput Taboola click ingestion
   clicks-meta-api/             Go API for Meta click ingestion and CAPI queue fanout
@@ -180,7 +188,10 @@ docs/
 
 ## Documentation Roadmap
 
-This top-level README explains the system at portfolio-review depth. As each service is moved into this repository, it will receive its own documentation covering:
+This top-level README explains the system at portfolio-review depth. The
+included application folders each have their own README and supporting docs. As
+additional services are moved into this repository, they should receive their
+own documentation covering:
 
 - Service purpose and ownership boundary
 - Local setup

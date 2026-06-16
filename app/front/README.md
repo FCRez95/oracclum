@@ -2,7 +2,7 @@
 
 Oracclum was built to help performance marketing teams connect campaign data,
 ad spend, clicks, funnel events, sales, revenue, and ROAS in one operational
-interface. This repository contains the main Next.js frontend adapted from the
+interface. This folder contains the main Next.js frontend adapted from the
 original SaaS so it can be reviewed safely as a public project.
 
 The original commercial operation is closed. This version keeps the product
@@ -396,24 +396,29 @@ npm audit --omit=dev
 
 ## Quality Gates
 
-Last verified during portfolio cleanup on 2026-06-14:
+Last verified during portfolio cleanup on 2026-06-16:
 
 | Gate | Status |
 | --- | --- |
 | `npm ci` | Passing |
 | `npm run lint` | Passing |
-| `npm test -- --runInBand` | Passing, 16 suites and 88 tests |
+| `npm test -- --runInBand` | Passing, 17 suites and 90 tests |
 | `npm run build` | Passing |
 | `npm audit --omit=dev` | Passing, 0 vulnerabilities |
 
 
 ## Backend and Services
 
-This repository is the frontend application only.
+This folder is the frontend application. The sibling backend API now lives in:
 
-The original full system also involved backend APIs, ingestion services, SQS
-processing, and lambda workers. Those services are intentionally not included
-in this frontend repository.
+```text
+../back
+```
+
+The original full system also involved separate ingestion services, SQS
+processing, and lambda workers. Those runtime boundaries are described in the
+top-level README, but their source folders are not included in this portfolio
+snapshot yet.
 
 The frontend is still structured to work with a backend when one is configured:
 
