@@ -1,6 +1,6 @@
 import { appBaseUrl, backendApiUrl, taboolaApiBaseUrl } from "@/config/appConfig";
 
-export const ExternalURL = backendApiUrl;
+export const ExternalURL = backendApiUrl.replace(/\/+$/, "");
 export const InternalURL =
   typeof window === "undefined" ? `${appBaseUrl}/api/` : "/api/";
 export const TaboolaURL = taboolaApiBaseUrl;

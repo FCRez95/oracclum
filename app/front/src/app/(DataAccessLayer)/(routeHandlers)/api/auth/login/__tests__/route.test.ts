@@ -86,6 +86,27 @@ describe('POST /api/auth/login', () => {
         expect(data).toEqual({ message: 'Invalid login credentials.' });
     });
 
+    it('should return a sanitized error if backend returns a non-JSON response', async () => {
+        const credentials = { username: 'user', password: 'wrong' };
+        const mockRequest = {
+            json: jest.fn().mockResolvedValue(credentials)
+        } as unknown as NextRequest;
+
+        const backendResponse = {
+            ok: false,
+            status: 404,
+            headers: new Headers({ 'content-type': 'text/html' }),
+            json: jest.fn().mockRejectedValue(new SyntaxError('Unexpected token <'))
+        };
+        global.fetch = jest.fn().mockResolvedValue(backendResponse as unknown);
+
+        const response = await POST(mockRequest);
+        const data = await response.json();
+
+        expect(response.status).toBe(404);
+        expect(data).toEqual({ message: 'Unable to complete login.' });
+    });
+
     it('should return 500 if an exception is thrown', async () => {
         const mockRequest = {
             json: jest.fn().mockRejectedValue(new Error('fail'))

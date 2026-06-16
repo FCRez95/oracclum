@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     }
 
     const backendResponse = await fetch(
-      `${ExternalURL}load-integration-status/${campaignId}`,
+      `${ExternalURL}/load-integration-status/${campaignId}`,
       {
         method: "GET",
         headers: {

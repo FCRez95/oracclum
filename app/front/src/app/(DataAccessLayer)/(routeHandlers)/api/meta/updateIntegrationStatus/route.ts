@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const backendResponse = await fetch(
-      `${ExternalURL}update-integration-status`,
+      `${ExternalURL}/update-integration-status`,
       {
         method: "POST",
         headers: {

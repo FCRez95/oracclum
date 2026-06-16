@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     }
 
     const backendResponse = await fetch(
-      `${ExternalURL}load-meta-info`,
+      `${ExternalURL}/load-meta-info`,
       {
         method: "GET",
         headers: {

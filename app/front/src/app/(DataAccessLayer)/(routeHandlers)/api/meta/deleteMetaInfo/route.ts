@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const { controller, timeoutId: tId } = abortTimeout();
     timeoutId = tId;
 
-    const response = await fetch(`${ExternalURL}delete-meta-info`, {
+    const response = await fetch(`${ExternalURL}/delete-meta-info`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

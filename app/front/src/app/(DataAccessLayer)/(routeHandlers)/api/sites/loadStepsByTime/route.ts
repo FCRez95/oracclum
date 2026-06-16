@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
                 { status: 401 }
             );
         }
-        const backendUrl = `${ExternalURL}load-site-steps-by-time/${campaign_id}/${id_site}/${days}/`;
+        const backendUrl = `${ExternalURL}/load-site-steps-by-time/${campaign_id}/${id_site}/${days}/`;
 
         const { controller, timeoutId } = abortTimeout();
 

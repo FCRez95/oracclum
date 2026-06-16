@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const backendResponse = await fetch(`${ExternalURL}save-pixel-info`, {
+    const backendResponse = await fetch(`${ExternalURL}/save-pixel-info`, {
       method: "POST",
       headers: {
         "x-access-token": accessToken,

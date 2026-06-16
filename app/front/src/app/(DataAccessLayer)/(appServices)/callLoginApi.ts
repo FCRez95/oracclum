@@ -46,4 +46,3 @@ export const LoginApi = async (email: string, password: string) => {
     }
 };
 
-

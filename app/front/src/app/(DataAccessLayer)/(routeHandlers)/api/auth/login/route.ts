@@ -4,6 +4,10 @@ import { abortTimeout } from "@/app/(DataAccessLayer)/(routeHandlers)/api/abortT
 import { rateLimit, getClientIp } from "@/utils/rateLimit";
 import { upstreamErrorResponse } from "@/app/(DataAccessLayer)/(routeHandlers)/api/errorResponses";
 
+type LoginBackendResponse = {
+  accessToken?: unknown;
+};
+
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIp(request);
@@ -28,15 +32,33 @@ export async function POST(request: NextRequest) {
     });
     clearTimeout(timeoutId);
 
-    const backendData = await backendResponse.json();
+    const backendData = (await backendResponse.json().catch((parseError) => {
+      console.error("[Auth Login] Backend returned a non-JSON response:", {
+        status: backendResponse.status,
+        contentType: backendResponse.headers.get("content-type"),
+        parseError,
+      });
+      return null;
+    })) as LoginBackendResponse | null;
+
+    if (!backendData) {
+      return upstreamErrorResponse(
+        "Unable to complete login.",
+        backendResponse.ok ? 502 : backendResponse.status
+      );
+    }
 
     if (!backendResponse.ok) {
       console.error("[Auth Login] Backend rejected login:", backendResponse.status, backendData);
       return upstreamErrorResponse("Invalid login credentials.", backendResponse.status);
     }
-    const accessToken = backendData.accessToken;
 
-    return NextResponse.json({ accessToken: accessToken }, { status: 200 });
+    if (typeof backendData.accessToken !== "string" || !backendData.accessToken) {
+      console.error("[Auth Login] Backend login response did not include an access token.");
+      return upstreamErrorResponse("Invalid login response.", 502);
+    }
+
+    return NextResponse.json({ accessToken: backendData.accessToken }, { status: 200 });
   } catch (error) {
     console.error("[Auth Login] Unexpected error:", error);
     return NextResponse.json(

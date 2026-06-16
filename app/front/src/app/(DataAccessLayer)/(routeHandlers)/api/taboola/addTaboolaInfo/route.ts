@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     const { controller, timeoutId: tId } = abortTimeout();
     timeoutId = tId;
 
-    const response = await fetch(`${ExternalURL}add-taboola-info`, {
+    const response = await fetch(`${ExternalURL}/add-taboola-info`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

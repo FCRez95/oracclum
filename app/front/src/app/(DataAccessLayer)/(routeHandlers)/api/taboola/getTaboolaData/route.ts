@@ -15,10 +15,7 @@ export async function GET(request: NextRequest) {
 
     try {
         const { controller, timeoutId } = abortTimeout();
-        const backendUrl = new URL(
-            `load-taboola-info/${encodeURIComponent(accessToken)}`,
-            ExternalURL
-        ).toString();
+        const backendUrl = `${ExternalURL}/load-taboola-info/${encodeURIComponent(accessToken)}`;
 
         const response = await fetch(backendUrl, {
             method: "GET",
