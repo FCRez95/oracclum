@@ -21,6 +21,7 @@ import { callStepsByTime } from "@/app/(DataAccessLayer)/(appServices)/calls/sit
 import { callLoadCampaignStepsByTime } from "@/app/(DataAccessLayer)/(appServices)/calls/loadUserCampaign/callLoadCampaignStepsByTime";
 import { TaboolaCallerWrapper } from "@/utils/TaboolaCallerWrapper";
 import { TaboolaSubaccountModel } from "@/models/taboola-subaccount-model";
+import { normalizeCampaignStepsSummary } from "@/models/campaign-steps-summary";
 import { ListTaboolaCampaignsApi } from "@/app/(DataAccessLayer)/(appServices)/calls/taboola/listTaboolaCampaigns";
 import { ExternalCampaignModel } from "@/models/external-campaign-model";
 import { isFrontendMockDemoSession } from "@/demo/demoMode";
@@ -317,13 +318,16 @@ export const loadCampaignStepsAction = async (
 ) => {
   try {
     if (await isFrontendDemoSession()) {
-      return { success: true, data: getDemoCampaignSteps(campaignId) };
+      return {
+        success: true,
+        data: normalizeCampaignStepsSummary(getDemoCampaignSteps(campaignId)),
+      };
     }
 
     const cookieStore = await cookies();
     const sessionCookies = cookieStore.toString();
     const data = await callLoadCampaignStepsByTime(campaignId, days, sessionCookies);
-    return { success: true, data };
+    return { success: true, data: normalizeCampaignStepsSummary(data) };
   } catch (error) {
     console.error("Erro ao buscar passos do funil:", error);
     return { success: false, errors: { general: ["Erro ao buscar passos do funil"] } };

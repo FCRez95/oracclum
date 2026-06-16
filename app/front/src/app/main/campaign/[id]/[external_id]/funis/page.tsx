@@ -31,7 +31,7 @@ export default function CampaignPage({ params }: CampaignPageProps) {
           selectedSideDate as number
         );
 
-        if (stepsRes.success) setCampSummary(stepsRes.data);
+        if (stepsRes.success && stepsRes.data) setCampSummary(stepsRes.data);
       } catch (error) {
         console.error("Error fetching campaign summary:", error);
       } finally {
