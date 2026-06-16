@@ -113,6 +113,7 @@ The backend reads configuration from `.env` or process environment variables.
 ```text
 PORT
 JWT_SECRET
+DEMO_MODE_ENABLED
 
 DB_HOST
 DB_PORT
@@ -133,7 +134,7 @@ DB_TEST_PASSWORD
 DB_TEST_NAME
 ```
 
-`DB_*` is used by the production app config, `DB_DEV_*` by the development app config, and `DB_TEST_*` by the opt-in DB test command.
+`DB_*` is used by the production app config, `DB_DEV_*` by the development app config, and `DB_TEST_*` by the opt-in DB test command. `DEMO_MODE_ENABLED=true` enables the safe backend demo login and mocked backend responses for local portfolio review.
 
 See [docs/configuration.md](docs/configuration.md) for the full environment table and command-to-runtime mapping.
 

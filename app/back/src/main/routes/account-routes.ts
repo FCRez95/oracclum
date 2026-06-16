@@ -20,6 +20,8 @@ import { makeDeleteAccountController } from '../factories/controllers/delete-acc
 import { makeDeactivateAccountController } from '../factories/controllers/deactivate-account/deactivate-account-controller-factory'
 import { makeActivateAccountController } from '../factories/controllers/activate-account/activate-account-controller-factory'
 import { makeClearAccountDataController } from '../factories/controllers/clear-account-data/clear-account-data-controller-factory'
+import { backendDemoByToken, backendDemoLogin, backendDemoResponse } from '../../demo/demo-route'
+import { backendDemoData } from '../../demo/demo-data'
 
 export default (router: Router, pool: Pool) => {
   const auth = adptMiddleware(makeAuthMiddleware(pool))
@@ -27,18 +29,18 @@ export default (router: Router, pool: Pool) => {
   const userConsentsAuth = adptMiddleware(makeUserConsentsMiddleware(pool))
   
   router.post('/signup', adptRoute(makeSignUpController(pool)))
-  router.post('/login', adptRoute(makeLoginController(pool)))
-  router.get('/loadUserData', adptRoute(makeLoadUserDataController(pool)))
-  router.post('/logout', auth, adptRoute(makeLogoutController(pool)))
-  router.post('/change-pass', auth, userConsentsAuth, adptRoute(makeChangePassController(pool)))
-  router.post('/add-taboola-info', auth, userConsentsAuth, adptRoute(makeAddTaboolaInfoController(pool)))
-  router.post('/add-meta-info', auth, userConsentsAuth, adptRoute(makeAddMetaInfoController(pool)))
-  router.get('/load-taboola-info', auth, userConsentsAuth, adptRoute(makeLoadTaboolaAccountInfoController(pool)))
+  router.post('/login', backendDemoLogin, adptRoute(makeLoginController(pool)))
+  router.get('/loadUserData', backendDemoByToken(() => backendDemoData.user()), adptRoute(makeLoadUserDataController(pool)))
+  router.post('/logout', auth, backendDemoResponse(() => backendDemoData.ok('Demo logout completed.')), adptRoute(makeLogoutController(pool)))
+  router.post('/change-pass', auth, userConsentsAuth, backendDemoResponse(() => backendDemoData.ok('Demo password changed.')), adptRoute(makeChangePassController(pool)))
+  router.post('/add-taboola-info', auth, userConsentsAuth, backendDemoResponse(() => ({ tb_access_token: 'demo-taboola-token' })), adptRoute(makeAddTaboolaInfoController(pool)))
+  router.post('/add-meta-info', auth, userConsentsAuth, backendDemoResponse(() => backendDemoData.ok('Demo Meta integration saved.')), adptRoute(makeAddMetaInfoController(pool)))
+  router.get('/load-taboola-info', auth, userConsentsAuth, backendDemoResponse(() => backendDemoData.taboolaInfo()), adptRoute(makeLoadTaboolaAccountInfoController(pool)))
   router.get('/load-all-users', adminAuth, adptRoute(makeLoadAllUsersController(pool)))
-  router.get('/load-enriched-user-data', auth, adptRoute(makeLoadEnrichedUserDataController(pool)))
-  router.post('/delete-meta-info', auth, adptRoute(makeDisconnectMetaController(pool)))
-  router.post('/delete-my-data', auth, adptRoute(makeClearAccountDataController(pool)))
-  router.get('/load-meta-info', auth, adptRoute(makeLoadMetaInfoController(pool)))
+  router.get('/load-enriched-user-data', auth, backendDemoResponse(() => backendDemoData.enrichedUser()), adptRoute(makeLoadEnrichedUserDataController(pool)))
+  router.post('/delete-meta-info', auth, backendDemoResponse(() => backendDemoData.ok('Demo Meta integration removed.')), adptRoute(makeDisconnectMetaController(pool)))
+  router.post('/delete-my-data', auth, backendDemoResponse(() => backendDemoData.ok('Demo user data deletion completed.')), adptRoute(makeClearAccountDataController(pool)))
+  router.get('/load-meta-info', auth, backendDemoResponse(() => backendDemoData.metaInfo()), adptRoute(makeLoadMetaInfoController(pool)))
   router.post('/delete-user', adminAuth, adptRoute(makeDeleteAccountController(pool)))
   router.post('/deactivate-user', adminAuth, adptRoute(makeDeactivateAccountController(pool)))
   router.post('/activate-user', adminAuth, adptRoute(makeActivateAccountController(pool)))

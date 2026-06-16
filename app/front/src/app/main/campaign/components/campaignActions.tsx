@@ -24,7 +24,7 @@ import { TaboolaSubaccountModel } from "@/models/taboola-subaccount-model";
 import { normalizeCampaignStepsSummary } from "@/models/campaign-steps-summary";
 import { ListTaboolaCampaignsApi } from "@/app/(DataAccessLayer)/(appServices)/calls/taboola/listTaboolaCampaigns";
 import { ExternalCampaignModel } from "@/models/external-campaign-model";
-import { isFrontendMockDemoSession } from "@/demo/demoMode";
+import { isAnyDemoSession, isFrontendMockDemoSession } from "@/demo/demoMode";
 import {
   getDemoCampaignOptimization,
   getDemoCampaignSites,
@@ -53,6 +53,10 @@ async function isFrontendDemoSession() {
   return isFrontendMockDemoSession(await getCurrentSession());
 }
 
+async function isDemoSession() {
+  return isAnyDemoSession(await getCurrentSession());
+}
+
 export const getUserPlanInfo = async (): Promise<{
   user_type: string;
   allow_clicks: boolean;
@@ -72,7 +76,7 @@ export const getUserPlanInfo = async (): Promise<{
 
 export const loadSubaccountsAction = async (): Promise<{ success: boolean; data?: SubaccountsData; errors?: Record<string, string[]> }> => {
   try {
-    if (await isFrontendDemoSession()) {
+    if (await isDemoSession()) {
       return { success: true, data: getDemoSubaccounts() };
     }
 
@@ -101,7 +105,7 @@ export const loadTaboolaCampaignsAction = async (
   subAccount?: string
 ): Promise<{ success: boolean; data?: ExternalCampaignModel[]; errors?: Record<string, string[]> }> => {
   try {
-    if (await isFrontendDemoSession()) {
+    if (await isDemoSession()) {
       return { success: true, data: getDemoExternalCampaigns() };
     }
 
@@ -339,7 +343,7 @@ export const loadTaboolaCampaignDataAction = async (
   subAccount?: string | null
 ) => {
   try {
-    if (await isFrontendDemoSession()) {
+    if (await isDemoSession()) {
       return { success: true, data: getDemoTaboolaCampaignData() };
     }
 
@@ -378,7 +382,7 @@ export const updateTaboolaCampaignDataAction = async (
   subAccount?: string
 ) => {
   try {
-    if (await isFrontendDemoSession()) {
+    if (await isDemoSession()) {
       return { success: true, data: { success: true, updated: data } };
     }
 
@@ -467,7 +471,7 @@ export const updateTaboolaAdAction = async (
   subAccount?: string
 ) => {
   try {
-    if (await isFrontendDemoSession()) {
+    if (await isDemoSession()) {
       return { success: true, data: { success: true, updated: updateData } };
     }
 
@@ -494,7 +498,7 @@ export const updateTaboolaAdAction = async (
 
 export const getTaboolaAdsDataAction = async (campaignTaboolaId: number | string, subAccount?: string) => {
   try {
-    if (await isFrontendDemoSession()) {
+    if (await isDemoSession()) {
       return { success: true, data: getDemoTaboolaAdStatuses() };
     }
 

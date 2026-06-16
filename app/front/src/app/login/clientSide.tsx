@@ -3,7 +3,11 @@ import { useEffect } from "react";
 
 import FormComponent from "@/components/Forms/FormComponent";
 import InputComponent from "@/components/Forms/InputComponent";
-import { demoLoginAction, loginAction } from "@/app/login/loginActions";
+import {
+  backendDemoLoginAction,
+  demoLoginAction,
+  loginAction,
+} from "@/app/login/loginActions";
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -32,15 +36,21 @@ const ClientLoginPage = () => {
     demoLoginAction as (state: LoginState) => Promise<LoginState>,
     initialState
   );
+  const [backendDemoState, backendDemoFormAction, backendDemoPending] = useActionState(
+    backendDemoLoginAction as (state: LoginState) => Promise<LoginState>,
+    initialState
+  );
 
   const router = useRouter();
-  const isRedirecting = Boolean(state?.success || demoState?.success);
+  const isRedirecting = Boolean(state?.success || demoState?.success || backendDemoState?.success);
 
   useEffect(() => {
-    if (state?.success || demoState?.success) {
+    if (state?.success || demoState?.success || backendDemoState?.success) {
       router.push("/main/campaign");
     }
-  }, [state, demoState, router]);
+  }, [state, demoState, backendDemoState, router]);
+
+  const isBusy = pending || demoPending || backendDemoPending || isRedirecting;
 
   return (
     <>
@@ -86,10 +96,10 @@ const ClientLoginPage = () => {
 
         <button
           type="submit"
-          disabled={pending || demoPending || isRedirecting}
+          disabled={isBusy}
           className={`bg-bg-primary text-text-on-primary mx-auto px-large p-small rounded-large transition duration-300 ease-in-out
             ${
-              pending || demoPending || isRedirecting
+              isBusy
                 ? "opacity-70 cursor-not-allowed"
                 : "hover:bg-bg-primary-hover hover:cursor-pointer"
             }`}
@@ -128,13 +138,14 @@ const ClientLoginPage = () => {
         )}
       </FormComponent>
 
-      <form action={demoFormAction} className="mt-small flex justify-center">
+      <div className="mt-small flex flex-wrap justify-center gap-small">
+      <form action={demoFormAction}>
         <button
           type="submit"
-          disabled={pending || demoPending || isRedirecting}
+          disabled={isBusy}
           className={`text-text-main border border-border-muted bg-bg-card px-large py-small rounded-large transition duration-300 ease-in-out
             ${
-              pending || demoPending || isRedirecting
+              isBusy
                 ? "opacity-70 cursor-not-allowed"
                 : "hover:border-border-highlight hover:bg-bg-app hover:cursor-pointer"
             }`}
@@ -164,14 +175,55 @@ const ClientLoginPage = () => {
               Abrindo demo...
             </span>
           ) : (
-            "Entrar em modo demo"
+            "Demo frontend"
           )}
         </button>
       </form>
+      <form action={backendDemoFormAction}>
+        <button
+          type="submit"
+          disabled={isBusy}
+          className={`text-text-main border border-border-muted bg-bg-card px-large py-small rounded-large transition duration-300 ease-in-out
+            ${
+              isBusy
+                ? "opacity-70 cursor-not-allowed"
+                : "hover:border-border-highlight hover:bg-bg-app hover:cursor-pointer"
+            }`}
+        >
+          {backendDemoPending || (isRedirecting && backendDemoState?.success) ? (
+            <span className="flex items-center gap-2">
+              <svg
+                className="animate-spin h-5 w-5 text-text-main"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                />
+              </svg>
+              Abrindo demo...
+            </span>
+          ) : (
+            "Demo com backend"
+          )}
+        </button>
+      </form>
+      </div>
 
-      {demoState.errors?.form && (
+      {(demoState.errors?.form || backendDemoState.errors?.form) && (
         <span className="mt-extra-small block text-center text-sm text-text-error">
-          {demoState.errors.form[0]}
+          {demoState.errors?.form?.[0] || backendDemoState.errors?.form?.[0]}
         </span>
       )}
     </>

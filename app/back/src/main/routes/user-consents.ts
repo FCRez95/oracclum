@@ -6,10 +6,12 @@ import { makeAuthMiddleware } from '../factories/middlewares/auth-middleware-fac
 import { makeUserConsentsMiddleware } from '../factories/middlewares/user-consents-middleware-factory'
 import { makeAcceptTermsController } from '../factories/controllers/accept-terms/accept-terms-controller-factory'
 import { makeLoadUserConsentsController } from '../factories/controllers/load-user-consents/load-user-consents-controller-factory'
+import { backendDemoResponse } from '../../demo/demo-route'
+import { backendDemoData } from '../../demo/demo-data'
 
 export default (router: Router, pool: Pool) => {
   const auth = adptMiddleware(makeAuthMiddleware(pool))
   const userConsentsAuth = adptMiddleware(makeUserConsentsMiddleware(pool))
-  router.post('/accept-terms', auth, adptRoute(makeAcceptTermsController(pool)))
-  router.get('/load-user-consents', auth, userConsentsAuth, adptRoute(makeLoadUserConsentsController(pool)))
+  router.post('/accept-terms', auth, backendDemoResponse(() => backendDemoData.ok('Demo terms accepted.')), adptRoute(makeAcceptTermsController(pool)))
+  router.get('/load-user-consents', auth, userConsentsAuth, backendDemoResponse(() => backendDemoData.consent()), adptRoute(makeLoadUserConsentsController(pool)))
 }

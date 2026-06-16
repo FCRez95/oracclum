@@ -11,7 +11,7 @@ import type { MetaCampaignData } from "@/models/meta-campaign-data";
 import type { OptimizationData } from "@/models/optimization-data";
 import type { SessionPayload } from "@/models/SessionPayload";
 import type { TaboolaSubaccountModel } from "@/models/taboola-subaccount-model";
-import { FRONTEND_DEMO_MODE } from "./demoMode";
+import { FRONTEND_DEMO_ACCESS_TOKEN, FRONTEND_DEMO_MODE } from "./demoMode";
 
 const DEMO_PLACEHOLDER_IMAGE = "/placeholder.webp";
 
@@ -352,7 +352,7 @@ function getCampaignOptimization(campaignId: number | string): CampaignOptimizat
 
 export function getDemoSessionPayload(): SessionPayload {
   return {
-    accessToken: "demo-access-token",
+    accessToken: FRONTEND_DEMO_ACCESS_TOKEN,
     userData: JSON.stringify(demoUser),
     taboolaData: JSON.stringify(demoTaboolaAccount),
     metaData: JSON.stringify(demoMetaAccount),

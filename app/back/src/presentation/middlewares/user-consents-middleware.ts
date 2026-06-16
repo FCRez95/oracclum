@@ -15,6 +15,10 @@ export class UserConsentsMiddleware implements Middleware {
         return forbidden(new AccessDeniedError())
       }
 
+      if (httpRequest.body?.isBackendDemo) {
+        return ok({})
+      }
+
       const consents = await this.loadUserConsents.load(idUser)
 
       if (!consents || consents.contract_signed !== 1) {

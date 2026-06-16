@@ -162,7 +162,8 @@ export async function acceptContractTermsAction() {
       ...sessionPayload.contract,
       contract_signed: true,
     },
-    sessionPayload.metaData
+    sessionPayload.metaData,
+    sessionPayload.demoMode
   );
 
   return {

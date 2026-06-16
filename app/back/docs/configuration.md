@@ -18,6 +18,7 @@ The backend reads configuration from process environment variables and from a lo
 | --- | --- | --- | --- |
 | `PORT` | no | dev/prod server | HTTP port. Defaults to `5050`. |
 | `JWT_SECRET` | yes for real use | auth | Secret used to sign and verify backend access tokens. Use a long random value outside portfolio demos. |
+| `DEMO_MODE_ENABLED` | no | demo routes | Enables the safe backend demo login and mocked backend responses when set to `true`, `1`, `yes`, or `on`. |
 | `DB_HOST` | yes for prod start | `npm start` | MySQL host for compiled/prod-like runtime. |
 | `DB_PORT` | no | `npm start` | MySQL port. Defaults to `3306`. |
 | `DB_USER` | yes for prod start | `npm start` | MySQL username. |
@@ -35,6 +36,8 @@ The backend reads configuration from process environment variables and from a lo
 | `DB_TEST_NAME` | yes for DB tests | `npm run test:db` | Disposable MySQL database name for DB-backed tests. |
 
 The runtime server entry points fail fast when `JWT_SECRET` is missing. The default Jest setup provides a test-only secret so `npm test` can run without requiring a local `.env`.
+
+When backend demo mode is enabled, `POST /api/login` accepts the safe demo credentials used by the frontend backend-demo button and returns a demo access token. Authenticated demo requests are answered from backend-side fixtures before any MySQL or provider API work is attempted.
 
 ## Auth Header
 

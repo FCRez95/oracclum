@@ -9,7 +9,11 @@ import { CallerWrapper } from "@/utils/CallerWrapper";
 import { InternalURL } from "@/utils/apiRouter";
 import { META_OAUTH_TOKEN_COOKIE } from "@/lib/metaOauth";
 import { metaApiVersion } from "@/config/appConfig";
-import { isFrontendMockDemoSession } from "@/demo/demoMode";
+import {
+  isAnyDemoSession,
+  isBackendDemoSession,
+  isFrontendMockDemoSession,
+} from "@/demo/demoMode";
 import {
   getDemoMetaAdAccounts,
   getDemoMetaCampaigns,
@@ -163,7 +167,7 @@ export async function getMetaData() {
             contract_signed: false,
             signed_at: null,
           };
-          await createSession(session.accessToken, userData, taboolaData, contract, metaDataString);
+          await createSession(session.accessToken, userData, taboolaData, contract, metaDataString, session.demoMode);
         }
       }
     } catch (err) {
@@ -218,7 +222,7 @@ export async function changeTaboolaData(
         contract_signed: false,
         signed_at: null,
       };
-      await createSession(session.accessToken, userData, updatedTaboolaData, contract);
+      await createSession(session.accessToken, userData, updatedTaboolaData, contract, undefined, session.demoMode);
 
       return {
         success: true,
@@ -291,7 +295,7 @@ export async function saveMetaToken(
       contract_signed: false,
       signed_at: null,
     };
-    await createSession(session.accessToken, userData, taboolaData, contract, metaData);
+    await createSession(session.accessToken, userData, taboolaData, contract, metaData, session.demoMode);
 
     return { success: true, message: "Dados do Meta salvos com sucesso!" };
   } catch (err) {
@@ -310,7 +314,7 @@ export async function checkMetaTokenExpiration(): Promise<{
   if (!success || !session?.accessToken)
     return { connected: false, needsRenewal: false };
 
-  if (isFrontendMockDemoSession(session)) {
+  if (isAnyDemoSession(session)) {
     return { connected: true, needsRenewal: false, daysUntilExpiry: 365, isExpired: false };
   }
 
@@ -360,7 +364,7 @@ export async function removeMetaToken() {
     const metaData = typeof session.metaData === "string"
       ? JSON.parse(session.metaData)
       : session.metaData;
-    if (metaData?.access_token) {
+    if (metaData?.access_token && !isBackendDemoSession(session)) {
       const revokeResponse = await fetch(
         `https://graph.facebook.com/${metaApiVersion}/me/permissions?access_token=${metaData.access_token}`,
         { method: "DELETE" }
@@ -393,7 +397,7 @@ export async function removeMetaToken() {
       contract_signed: false,
       signed_at: null,
     };
-    await createSession(session.accessToken, userData, taboolaData, contract);
+    await createSession(session.accessToken, userData, taboolaData, contract, undefined, session.demoMode);
 
     return { success: true, message: "Desconectado do Facebook." };
   } catch (err) {

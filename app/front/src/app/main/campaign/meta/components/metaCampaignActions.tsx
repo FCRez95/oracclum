@@ -6,7 +6,7 @@ import { callMetaAdsetsSummary } from "@/app/(DataAccessLayer)/(appServices)/cal
 import { callMetaAdsSummary } from "@/app/(DataAccessLayer)/(appServices)/calls/meta/callMetaAdsSummary";
 import { callOneMetaAdSummary } from "@/app/(DataAccessLayer)/(appServices)/calls/meta/callOneMetaAdSummary";
 import { getSessionData } from "@/app/(DataAccessLayer)/(appServices)/calls/getSession/callGetSessionData";
-import { isFrontendMockDemoSession } from "@/demo/demoMode";
+import { isAnyDemoSession, isFrontendMockDemoSession } from "@/demo/demoMode";
 import {
   getDemoMetaAdsConfig,
   getDemoMetaAdsSummary,
@@ -22,6 +22,10 @@ async function isFrontendDemoSession() {
   return isFrontendMockDemoSession(await getSessionData());
 }
 
+async function isDemoSession() {
+  return isAnyDemoSession(await getSessionData());
+}
+
 async function getToken(): Promise<string> {
   const result = await getMetaData();
   if (!result.success || !result.metaData?.metaAdsToken) {
@@ -32,7 +36,7 @@ async function getToken(): Promise<string> {
 
 export async function loadMetaCampaignDataAction(externalId: string) {
   try {
-    if (await isFrontendDemoSession()) {
+    if (await isDemoSession()) {
       return { success: true, data: getDemoMetaCampaignData() };
     }
 
@@ -54,7 +58,7 @@ export async function updateMetaCampaignAction(
   updateData: Record<string, unknown>
 ) {
   try {
-    if (await isFrontendDemoSession()) {
+    if (await isDemoSession()) {
       return { success: true, data: { success: true, id: externalId, ...updateData } };
     }
 
@@ -94,7 +98,7 @@ export async function loadMetaAdsetsSummaryAction(
 
 export async function loadMetaAdsetsConfigAction(campaignExternalId: string) {
   try {
-    if (await isFrontendDemoSession()) {
+    if (await isDemoSession()) {
       return { success: true, data: getDemoMetaAdsetsConfig() };
     }
 
@@ -116,7 +120,7 @@ export async function updateMetaAdsetAction(
   updateData: Record<string, unknown>
 ) {
   try {
-    if (await isFrontendDemoSession()) {
+    if (await isDemoSession()) {
       return { success: true, data: { success: true, id: adsetId, ...updateData } };
     }
 
@@ -156,7 +160,7 @@ export async function loadMetaAdsSummaryAction(
 
 export async function loadMetaAdsConfigAction(campaignExternalId: string) {
   try {
-    if (await isFrontendDemoSession()) {
+    if (await isDemoSession()) {
       return { success: true, data: getDemoMetaAdsConfig() };
     }
 
@@ -198,7 +202,7 @@ export async function updateMetaAdAction(
   updateData: Record<string, unknown>
 ) {
   try {
-    if (await isFrontendDemoSession()) {
+    if (await isDemoSession()) {
       return { success: true, data: { success: true, id: adId, ...updateData } };
     }
 

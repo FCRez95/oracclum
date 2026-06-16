@@ -2,6 +2,7 @@
 import { cookies } from "next/headers";
 import { encrypt } from "@/app/(DataAccessLayer)/(appServices)/calls/encrypt/callEncrypt";
 import { getSessionCookieOptions } from "@/lib/sessionCookie";
+import type { DemoMode } from "@/demo/demoMode";
 
 type ContractProps = {
     id_user: number;
@@ -9,14 +10,22 @@ type ContractProps = {
     signed_at?: string | null;
 };
 
-export async function createSession(accessToken: string, userData: string, taboolaData: string, contract: ContractProps, metaData?: string) {
+export async function createSession(
+    accessToken: string,
+    userData: string,
+    taboolaData: string,
+    contract: ContractProps,
+    metaData?: string,
+    demoMode?: DemoMode
+) {
 
     const payload = {
         accessToken,
         userData,
         taboolaData,
         contract,
-        ...(metaData && { metaData })
+        ...(metaData && { metaData }),
+        ...(demoMode && { demoMode })
     };
 
     const session = await encrypt(payload);

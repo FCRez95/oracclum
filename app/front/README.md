@@ -67,11 +67,18 @@ Core user workflows include:
 
 Demo mode is the recommended way to review this project.
 
-It creates a signed local session with synthetic account data and routes the
-main product flows to local fixtures instead of the original backend. This lets
-reviewers explore the dashboard, campaign views, Meta screens, Taboola screens,
-integration states, account settings, and destructive-action safeguards without
-needing production credentials.
+The login screen now offers two portfolio-safe demo paths:
+
+- `Demo frontend` creates a signed local session and serves demo data from the
+  frontend fixtures only.
+- `Demo com backend` logs in through the local backend and lets backend-facing
+  product requests return backend-side mocked responses. Direct Meta/Taboola
+  provider calls still use local fixtures so no real third-party credentials are
+  required.
+
+Both paths let reviewers explore the dashboard, campaign views, Meta screens,
+Taboola screens, integration states, account settings, and destructive-action
+safeguards without production credentials.
 
 ### Start a demo session
 
@@ -103,13 +110,17 @@ needing production credentials.
    http://localhost:3000/login
    ```
 
-6. Click:
+6. Click either demo button:
 
    ```text
-   Entrar em modo demo
+   Demo frontend
+   Demo com backend
    ```
 
 After login, the app redirects to the protected campaign area.
+
+For `Demo com backend`, also start the sibling backend with
+`DEMO_MODE_ENABLED=true` and `BACKEND_API_URL=http://localhost:5050/api`.
 
 ### Demo data included
 
@@ -340,7 +351,8 @@ Copy `.env.example` to `.env` for local development.
 | `META_API_VERSION` | No | Meta API version, defaults to `v24.0` |
 | `TABOOLA_API_BASE_URL` | No | Taboola API base URL |
 
-Demo mode works without real Meta, Taboola, or backend credentials.
+Frontend demo works without a backend. Backend demo requires the sibling backend
+running locally, but still works without real Meta or Taboola credentials.
 
 ## Local Development
 
