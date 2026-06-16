@@ -66,7 +66,7 @@ describe('GET /api/user/getUserData', () => {
         const json = await res.json();
 
         expect(global.fetch).toHaveBeenCalledWith(
-            'https://mocked-external-url.com/loadUserData/validtoken',
+            'https://mocked-external-url.com/loadUserData',
             expect.objectContaining({
                 method: 'GET',
                 headers: expect.objectContaining({

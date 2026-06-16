@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     try {
         const { controller, timeoutId } = abortTimeout();
 
-        const response = await fetch(`${ExternalURL}/loadUserData/${accessToken}`, {
+        const response = await fetch(`${ExternalURL}/loadUserData`, {
             method: "GET",
             headers: {
                 'x-access-token': accessToken,

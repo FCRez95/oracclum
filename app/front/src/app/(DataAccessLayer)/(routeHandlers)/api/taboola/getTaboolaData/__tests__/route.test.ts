@@ -65,7 +65,7 @@ describe('GET /api/taboola-data', () => {
 
         const res = await GET(req);
         expect(global.fetch).toHaveBeenCalledWith(
-            'https://mocked-external-url.com/load-taboola-info/testtoken',
+            'https://mocked-external-url.com/load-taboola-info',
             expect.objectContaining({
                 method: 'GET',
                 headers: expect.objectContaining({
