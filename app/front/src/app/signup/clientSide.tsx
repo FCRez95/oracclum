@@ -33,10 +33,6 @@ const ClientSignupPage = () => {
     if (state?.success) {
       router.push("/login");
     }
-
-    if (state?.errors && Object.keys(state.errors).length > 0) {
-      console.error("Erros de cadastro:", state.errors);
-    }
   }, [state, router]);
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {

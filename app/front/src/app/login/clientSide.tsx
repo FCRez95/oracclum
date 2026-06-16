@@ -40,10 +40,6 @@ const ClientLoginPage = () => {
     if (state?.success || demoState?.success) {
       router.push("/main/campaign");
     }
-
-    if (state?.errors && Object.keys(state.errors).length > 0) {
-      console.error("Erros de login:", state.errors);
-    }
   }, [state, demoState, router]);
 
   return (
