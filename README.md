@@ -2,7 +2,7 @@
 
 Oracclum was a campaign attribution and optimization platform for paid traffic teams running Taboola and Meta campaigns.
 
-This repository is a sanitized portfolio reconstruction of production systems I built and operated as Oracclum's co-founder. Credentials, customer data, proprietary deployment values, and company-sensitive details have been removed or replaced. The code included here may differ from the exact production code, but the architecture, service boundaries, and core engineering problems reflect the real system.
+This repository is a sanitized portfolio reconstruction of production systems I built and operated as Oracclum's founder. Credentials, customer data, proprietary deployment values, and company-sensitive details have been removed or replaced. The code included here is different from the exact production code, but the architecture, service boundaries, and core engineering problems reflect the real system.
 
 ## Production Context
 
@@ -16,7 +16,7 @@ At peak commercial usage, the company reached:
 
 The client-account number reflects company traction at the time, not a platform concurrency limit.
 
-The main engineering challenge was building a system that could ingest high-volume campaign events with low latency, process them asynchronously, and expose useful campaign intelligence to users without coupling the tracking path to dashboard workloads.
+The main engineering challenge was not only building a system that could ingest high-volume campaign events with low latency, process them asynchronously, and expose useful campaign intelligence. It was making that capability accessible to non-technical customers through an easy integration, so they could get the same attribution and optimization results as more technical teams without needing to build or maintain their own tracking infrastructure.
 
 ## System Overview
 
@@ -80,11 +80,11 @@ flowchart LR
 
 The main app let customers connect ad-provider accounts, create campaigns, configure tracking, and review performance by campaign, site, ad, adset, and funnel step. The frontend used Next.js with server-side API routes acting as a BFF layer over the Node.js backend. The backend handled authentication, user/account management, campaign setup, provider integrations, and reporting queries.
 
-The Clicks APIs were kept separate from the main backend because they served a different workload. Their job was to accept campaign events quickly, validate each `click_auth` token from an in-memory campaign map, enrich events with the internal campaign ID, and enqueue work to SQS. Before sending to SQS, events were buffered for a short batching window and sharded by click ID so duplicate or partial events arriving together could be merged with the strongest observed signals, reducing queue writes without adding latency to the request path. This avoided a database read on every click and kept the ingestion path resilient during traffic spikes.
+The Clicks APIs were kept separate from the main backend because they served a different workload. Their job was to accept campaign events quickly, validate each `click_auth` token from an in-memory campaign map, enrich events with the internal campaign ID, and enqueue work to SQS. Events with the same click ID represented shards of the same click progression, so the APIs distributed them to the same worker during a short batching window. That worker could aggregate duplicate or partial events before dispatching to SQS, preserving the strongest observed signals and reducing queue writes without adding latency to the request path. In-memory campaign resolution avoided a database read on every click, and the batching model kept the ingestion path resilient during traffic spikes.
 
-The Lambda workers consumed SQS batches and persisted click progress to MySQL. They deduplicated events by click ID and used upsert semantics so partial events could arrive in any order without losing stronger funnel progress. For example, a later event could fill missing ad or site metadata, while step fields kept the greatest observed value.
+The Lambda workers consumed SQS batches and persisted click progress to MySQL. They deduplicated events by click ID and used upsert semantics so partial events could arrive in any order without losing stronger funnel progress. For example, a later event could fill missing ad or site metadata, while funnel step fields kept the greatest observed value.
 
-For Meta campaigns, the ingestion API also fanned events out to a separate queue for Meta Conversions API delivery. The sender Lambda loaded campaign pixel credentials from MySQL and dispatched validated events to Meta in parallel, while returning per-message failures to SQS so failed records could be retried.
+For Meta campaigns, the ingestion API also fanned events out to a separate queue for Meta Conversions API delivery. Same-click events were aggregated only for the persistence queue; CAPI events were sent to their own SQS queue without that aggregation step. The sender Lambda loaded campaign pixel credentials from MySQL and dispatched validated events to Meta in parallel, while returning per-message failures to SQS so failed records could be retried.
 
 ## Event Flows
 
@@ -101,7 +101,8 @@ sequenceDiagram
 
     Campaign->>API: POST /clicks with click_auth and funnel data
     API->>API: Resolve click_auth from in-memory map
-    API->>SQS: Enqueue normalized click event
+    API->>API: Aggregate same-click events during batching window
+    API->>SQS: Enqueue normalized click progression event
     API-->>Campaign: 202 Accepted
     SQS->>Lambda: Deliver batch
     Lambda->>Lambda: Deduplicate by click ID
@@ -124,8 +125,9 @@ sequenceDiagram
 
     Campaign->>API: POST /clicks with event_id, source URL, user agent, IP, funnel step
     API->>API: Resolve click_auth and validate Meta event shape
-    API->>DBQueue: Enqueue persistence event
-    API->>CAPIQueue: Enqueue conversion event
+    API->>CAPIQueue: Enqueue raw conversion event
+    API->>API: Aggregate same-click events for persistence during batching window
+    API->>DBQueue: Enqueue aggregated persistence event
     API-->>Campaign: 202 Accepted
     DBQueue->>Writer: Deliver batch
     Writer->>DB: Batch upsert into clicks_meta
@@ -136,11 +138,12 @@ sequenceDiagram
 
 ## Funnel Semantics
 
-Tracked events represented progressive funnel visibility rather than a single linear request.
+Tracked events represented progressive funnel visibility rather than a single linear request. Each click was represented by a progression object that accumulated what Oracclum had observed about the visitor and their funnel movement. Incoming events filled that object's fields over time: campaign metadata, source and click identifiers, funnel-step state, checkout visibility, and eventually revenue when a purchase or revenue signal was available.
 
-- `step_1`, `step_2`, and `step_3` represented intermediate pageview/view-content milestones configured in the customer's funnel.
-- `checkout` represented checkout pageview/view-content activity.
-- Revenue attribution was tracked separately from the click ingestion path.
+- `step_1`, `step_2`, and `step_3` represented intermediate milestones configured in the customer's funnel.
+- `checkout` represented the checkout milestone.
+- Each funnel step field could be `none`, `page_view`, or `view_content`, indicating how far the visitor progressed within that specific step.
+- Revenue completed the click progression when Oracclum received a purchase or revenue signal for the click.
 
 The click writers were designed around duplicate and partial event delivery. Instead of treating each event as a full replacement, the workers merged events by click ID and preserved the most advanced observed step state.
 
