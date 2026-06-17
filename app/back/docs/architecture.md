@@ -138,7 +138,7 @@ Controllers return project-level `HttpResponse` objects. The Express route adapt
 { "error": "Public error message" }
 ```
 
-A regression test covers that stack traces are not sent in JSON API responses.
+Tests ensure that stack traces are not sent in JSON API responses.
 
 ## Testability
 

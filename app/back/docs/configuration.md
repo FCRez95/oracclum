@@ -47,10 +47,6 @@ Authenticated API routes expect the backend token in this header:
 x-access-token: <token returned by /api/login>
 ```
 
-The backend no longer accepts access tokens in URL path parameters.
-
 ## Provider Credentials
 
 Taboola and Meta credentials are stored through API workflows and persisted in MySQL. They are not represented as static environment variables in this backend.
-
-Keep all provider credentials and generated tokens out of git. Use placeholder values in `.env.example` and local-only values in `.env`.
