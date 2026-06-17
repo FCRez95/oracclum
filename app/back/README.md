@@ -249,15 +249,6 @@ Consent and wait list workflows:
 - `GET /load-user-consents`
 - `POST /add-wait-list`
 
-## Known Tradeoffs
-
-This repository is intentionally being polished in stages. Current known modernization areas include:
-
-- The dependency stack has been upgraded for Node.js 24, and low-risk typo-heavy internal names have been cleaned up.
-- Some DB integration tests and route tests need to be converted to a cleaner mocked test strategy.
-- Some broader legacy structure remains from the original codebase and should be addressed only with stronger end-to-end coverage.
-- Security hygiene has been reviewed for portfolio readiness, but the broad generic SQL helper style should be replaced in a future deeper persistence refactor.
-
 ## Portfolio Readiness Snapshot
 
 Current verification status:
