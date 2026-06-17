@@ -71,7 +71,7 @@ The login screen now offers two portfolio-safe demo paths:
 
 - `Demo frontend` creates a signed local session and serves demo data from the
   frontend fixtures only.
-- `Demo com backend` logs in through the local backend and lets backend-facing
+- `Demo with backend` logs in through the local backend and lets backend-facing
   product requests return backend-side mocked responses. Direct Meta/Taboola
   provider calls still use local fixtures so no real third-party credentials are
   required.
