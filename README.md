@@ -8,7 +8,7 @@ This repository is a sanitized portfolio reconstruction of production systems I 
 
 At peak commercial usage, the company reached:
 
-- 10 active client accounts using the platform at the same time commercially
+- 15+ active client accounts using the platform at the same time commercially
 - 50+ tracked campaigns
 - 2.5M+ captured events per day
 - 870K+ events per minute of ingestion capacity
