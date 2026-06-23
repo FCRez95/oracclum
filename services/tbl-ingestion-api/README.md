@@ -240,15 +240,3 @@ The batcher shards events by click ID so all updates for the same click land on 
 Each worker owns its own flush timer. A worker flushes when its buffer reaches the SQS batch size, when the worker has been quiet for the configured interval, or when the sink is closed during shutdown. Under continuous same-key traffic, repeated events can keep merging into one buffered item until that worker gets a quiet interval or the process shuts down.
 
 SQS batches are capped at 10 entries to match the SQS `SendMessageBatch` limit. Retryable partial failures are retried by the queue sender; permanent failures are reported internally for follow-up handling.
-
-## Roadmap
-
-- Docker Compose demo with MySQL and LocalStack SQS.
-- CI workflow.
-- DLQ strategy for permanent SQS failures.
-- Structured logging, request IDs, and metrics.
-- OpenAPI specification or generated API docs if needed.
-
-## License
-
-No license has been selected yet.
