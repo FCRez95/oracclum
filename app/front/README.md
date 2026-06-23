@@ -427,10 +427,16 @@ This folder is the frontend application. The sibling backend API now lives in:
 ../back
 ```
 
-The original full system also involved separate ingestion services, SQS
-processing, and lambda workers. Those runtime boundaries are described in the
-top-level README, but their source folders are not included in this portfolio
-snapshot yet.
+The first restored ingestion service now lives in:
+
+```text
+../../services/tbl-ingestion-api
+```
+
+The original full system also involved additional ingestion services, SQS
+processing, and lambda workers. Those remaining runtime boundaries are
+described in the top-level README as historical system context until their
+source folders are restored.
 
 The frontend is still structured to work with a backend when one is configured:
 

@@ -8,7 +8,7 @@ This codebase is being prepared as part of a sanitized portfolio reconstruction 
 
 In the broader Oracclum system, this service was the backend for the main client-facing application. It handled customer workflows around accounts, campaigns, integrations, reporting.
 
-The high-throughput click ingestion APIs and SQS-triggered workers were separate runtime boundaries. Their job was to ingest and persist campaign events. This backend consumed the persisted attribution data and exposed it to the dashboard and operational product workflows.
+The high-throughput click ingestion APIs and SQS-triggered workers were separate runtime boundaries. Their job was to ingest and persist campaign events. This backend consumed the persisted attribution data and exposed it to the dashboard and operational product workflows. The first restored ingestion service now lives at `../../services/tbl-ingestion-api`.
 
 ## Backend Responsibilities
 
@@ -70,6 +70,8 @@ flowchart LR
 
 The click ingestion services and Lambda workers wrote high-volume event data into MySQL. This backend queried that data for product workflows such as campaign summaries, funnel analysis, site/ad drilldowns, and revenue attribution.
 
+Campaign lifecycle workflows also notify the restored ingestion service about active `click_auth` mappings through its admin endpoint. Those calls are controlled by the `CLICK_AUTH_*` environment variables documented below.
+
 ## Setup
 
 Install dependencies:
@@ -115,6 +117,10 @@ PORT
 JWT_SECRET
 DEMO_MODE_ENABLED
 
+CLICK_AUTH_API_BASE_URL
+META_CLICK_AUTH_API_BASE_URL
+CLICK_AUTH_ADMIN_TOKEN
+
 DB_HOST
 DB_PORT
 DB_USER
@@ -135,6 +141,8 @@ DB_TEST_NAME
 ```
 
 `DB_*` is used by the production app config, `DB_DEV_*` by the development app config, and `DB_TEST_*` by the opt-in DB test command. `DEMO_MODE_ENABLED=true` enables the safe backend demo login and mocked backend responses for local portfolio review.
+
+`CLICK_AUTH_API_BASE_URL` points backend campaign workflows at the ingestion service admin campaign-auth endpoint. `META_CLICK_AUTH_API_BASE_URL` can point to a separate Meta ingestion service when one is restored; by default the portfolio config uses the same local service URL. `CLICK_AUTH_ADMIN_TOKEN` should match the ingestion service `ADMIN_TOKEN` when admin routes are enabled.
 
 See [docs/configuration.md](docs/configuration.md) for the full environment table and command-to-runtime mapping.
 

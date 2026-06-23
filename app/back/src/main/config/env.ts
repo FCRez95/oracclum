@@ -40,10 +40,17 @@ const databaseConfig = (prefix: string, fallbackDatabase: string) => ({
   port: numberFromEnv(`${prefix}_PORT`, 3306)
 })
 
+const clickAuthApiBaseUrl = process.env.CLICK_AUTH_API_BASE_URL || 'http://localhost:8080/admin/clickauth'
+
 export default {
   db: databaseConfig('DB', 'oracclum'),
   dbDev: databaseConfig('DB_DEV', 'oracclum_dev'),
   dbTest: databaseConfig('DB_TEST', 'oracclum_test'),
   port: process.env.PORT || 5050,
-  jwtSecret: process.env.JWT_SECRET || ''
+  jwtSecret: process.env.JWT_SECRET || '',
+  clickAuthApi: {
+    defaultBaseUrl: clickAuthApiBaseUrl,
+    metaBaseUrl: process.env.META_CLICK_AUTH_API_BASE_URL || clickAuthApiBaseUrl,
+    adminToken: process.env.CLICK_AUTH_ADMIN_TOKEN || ''
+  }
 }

@@ -6,13 +6,14 @@ import { AccountMySqlRepository } from "../../../../infra/db/mysql/account/accou
 import { AllowedMetaAccountMySqlRepository } from "../../../../infra/db/mysql/allowed-meta-account/allowed-meta-account-mysql-repository"
 import { CampaignMySqlRepository } from "../../../../infra/db/mysql/campaign/campaign-mysql-repository"
 import { UserConsentsMySqlRepository } from "../../../../infra/db/mysql/user-consents/user-consents-mysql-repository"
+import env from "../../../config/env"
 
 export const makeDbClearAccountData = (pool: Pool): ClearAccountData => {
   const accountMySqlRepository = new AccountMySqlRepository(pool)
   const campaignMySqlRepository = new CampaignMySqlRepository(pool)
   const allowedMetaAccountMySqlRepository = new AllowedMetaAccountMySqlRepository(pool)
   const userConsentsMySqlRepository = new UserConsentsMySqlRepository(pool)
-  const removeClickAuthApi = new RemoveClickAuthApi()
+  const removeClickAuthApi = new RemoveClickAuthApi(env.clickAuthApi)
 
   return new DbClearAccountData(
     accountMySqlRepository,

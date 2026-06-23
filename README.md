@@ -31,8 +31,8 @@ flowchart LR
     end
 
     subgraph Ingestion["Click Ingestion"]
-        TaboolaAPI["services/clicks-taboola-api"]
-        MetaAPI["services/clicks-meta-api"]
+        TaboolaAPI["services/tbl-ingestion-api"]
+        MetaAPI["services/clicks-meta-api (historical)"]
     end
 
     subgraph Queues["AWS SQS"]
@@ -76,6 +76,11 @@ flowchart LR
     Back --> MetaExternal["Meta Marketing API"]
 ```
 
+The current repository restores the Taboola ingestion boundary as
+`services/tbl-ingestion-api`. The Meta ingestion service and Lambda workers are
+still represented as historical system context until their source folders are
+restored.
+
 ## How The Pieces Worked Together
 
 The main app let customers connect ad-provider accounts, create campaigns, configure tracking, and review performance by campaign, site, ad, adset, and funnel step. The frontend used Next.js with server-side API routes acting as a BFF layer over the Node.js backend. The backend handled authentication, user/account management, campaign setup, provider integrations, and reporting queries.
@@ -93,7 +98,7 @@ For Meta campaigns, the ingestion API also fanned events out to a separate queue
 ```mermaid
 sequenceDiagram
     participant Campaign as Client funnel
-    participant API as clicks-taboola-api
+    participant API as tbl-ingestion-api
     participant SQS as AWS SQS
     participant Lambda as taboola-clicks-writer
     participant DB as MySQL
@@ -150,22 +155,25 @@ The click writers were designed around duplicate and partial event delivery. Ins
 ## Repository Layout
 
 This monorepo is organized by runtime boundary. The current public portfolio
-snapshot includes the main application frontend and backend:
+snapshot includes the main application frontend and backend, plus the first
+restored ingestion service:
 
 ```text
 app/
   front/                       Next.js client application and BFF routes
   back/                        Node.js backend API for auth, campaigns, integrations, and reporting
+
+services/
+  tbl-ingestion-api/            Go API for high-throughput Taboola click ingestion
 ```
 
-The original production system also included separate ingestion services,
+The original production system also included additional ingestion services,
 Lambda workers, and operations/product documentation. Those runtime boundaries
-are described here for system context, but their source folders have not been
-restored into this repository snapshot yet:
+are described here for system context, but their source folders have not all
+been restored into this repository snapshot yet:
 
 ```text
 services/
-  clicks-taboola-api/          Go API for high-throughput Taboola click ingestion
   clicks-meta-api/             Go API for Meta click ingestion and CAPI queue fanout
 
 lambdas/
@@ -192,9 +200,9 @@ docs/
 ## Documentation Roadmap
 
 This top-level README explains the system at portfolio-review depth. The
-included application folders each have their own README and supporting docs. As
-additional services are moved into this repository, they should receive their
-own documentation covering:
+included application and service folders each have their own README and
+supporting docs. As additional runtime boundaries are moved into this
+repository, they should receive their own documentation covering:
 
 - Service purpose and ownership boundary
 - Local setup
@@ -204,7 +212,6 @@ own documentation covering:
 - Failure modes and retry behavior
 - Tests
 - Deployment notes
-- Known tradeoffs and future improvements
 
 ## Public Portfolio Note
 

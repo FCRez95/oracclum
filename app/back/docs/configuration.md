@@ -19,6 +19,9 @@ The backend reads configuration from process environment variables and from a lo
 | `PORT` | no | dev/prod server | HTTP port. Defaults to `5050`. |
 | `JWT_SECRET` | yes for real use | auth | Secret used to sign and verify backend access tokens. Use a long random value outside portfolio demos. |
 | `DEMO_MODE_ENABLED` | no | demo routes | Enables the safe backend demo login and mocked backend responses when set to `true`, `1`, `yes`, or `on`. |
+| `CLICK_AUTH_API_BASE_URL` | no | campaign workflows | Admin `click_auth` endpoint for the restored ingestion service. Defaults to `http://localhost:8080/admin/clickauth`. |
+| `META_CLICK_AUTH_API_BASE_URL` | no | campaign workflows | Optional separate admin `click_auth` endpoint for Meta ingestion. Defaults to `CLICK_AUTH_API_BASE_URL`. |
+| `CLICK_AUTH_ADMIN_TOKEN` | maybe | campaign workflows | Bearer token sent to ingestion admin routes. Set this to the ingestion service `ADMIN_TOKEN` when those routes are enabled. |
 | `DB_HOST` | yes for prod start | `npm start` | MySQL host for compiled/prod-like runtime. |
 | `DB_PORT` | no | `npm start` | MySQL port. Defaults to `3306`. |
 | `DB_USER` | yes for prod start | `npm start` | MySQL username. |
@@ -50,3 +53,5 @@ x-access-token: <token returned by /api/login>
 ## Provider Credentials
 
 Taboola and Meta credentials are stored through API workflows and persisted in MySQL. They are not represented as static environment variables in this backend.
+
+Campaign creation, account activation, account deactivation, and account data deletion also synchronize `click_auth` mappings with the ingestion service admin endpoint. In local portfolio runs, point `CLICK_AUTH_API_BASE_URL` at `services/tbl-ingestion-api` and set `CLICK_AUTH_ADMIN_TOKEN` to the same value as that service's `ADMIN_TOKEN`.
